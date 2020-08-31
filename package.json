@@ -1,0 +1,32 @@
+{
+  "name": "json-conditions",
+  "version": "1.0.0",
+  "description": "Simple conditional logic to evaluate against javascript objects",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha index.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raisely/json-conditions.git"
+  },
+  "keywords": [
+    "conditional",
+    "logic",
+    "conditions",
+    "json",
+    "logic"
+  ],
+  "author": "",
+  "license": "NoHarm",
+  "bugs": {
+    "url": "https://github.com/raisely/json-conditions/issues"
+  },
+  "homepage": "https://github.com/raisely/json-conditions#readme",
+  "devDependencies": {
+    "mocha": "^8.1.3"
+  },
+  "dependencies": {
+    "lodash": "^4.17.20"
+  }
+}
