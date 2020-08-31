@@ -47,7 +47,6 @@ checkConditions({
 checkConditions({
 	rules: [
 		// A required condition must always be satisfied regardless of the value
-		// of satisfy
 		{ property: 'toy.tracks', op: 'gt', value: 2, required: true },
 		{ property: 'batteries', op: 'eq', value: true },
 		{ property: 'solarPanels', op: 'gte', value: 0 },
@@ -59,7 +58,7 @@ checkConditions({
 
 ### Parameters
 | Param  | Type  | Default | Description |
-|---|---|---|
+|---|---|---|---|
 | settings.log | function | | Optional function to log debug output from the evaluation |
 | settings.rules | object[] |   | Rules, see below |
 | settings.satisfy | string | ANY | How many rules must be satisfied to pass, 'ALL' or 'ANY' |
@@ -68,11 +67,11 @@ checkConditions({
 #### Rules
 Each rule is described by an object with the following properties
 | property  | Type  | Default | Description |
-|---|---|---|
+|---|---|---|---|
 | op | string |   | The logical operator to use for comparison (see below) |
 | property | string |  | The property in the reference object to check, evaluated by |
 | required | boolean | false | If true, this rule must always evaluate to true for the object to pass the conditions | 
-| value | | Value to compare the property to |
+| value | * |  | Value to compare the property to |
 
 Property is passed to [lodash.get](https://lodash.com/docs/4.17.15#get) to lookup the value in the object.
 So effectively the rules are evaluated to `get(reference, rule.property) ${rule.op} ${rule.value}`
@@ -84,8 +83,8 @@ Additionally, we assume that rule values may have come from a form, and so try t
 booleans. If the value of the property is a boolean, then the strings 'true' and 'false' (case insensitive) will
 be converted to booleans.
 
-| operator  | Javascript operation |
-|---|---|---|
+| Operator  | Javascript operation |
+|---|---|
 | eq | == |
 | neq | != |
 | gt | > |
