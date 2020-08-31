@@ -4,11 +4,11 @@ Simple json takes an array of conditions that can be compared against a JSON obj
 
 # Quickstart
 
-```
+```sh
 npm install json-conditions
 ```
 
-```
+```javascript
 const checkConditions = require('json-conditions');
 
 const reference = {
