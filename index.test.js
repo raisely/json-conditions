@@ -24,6 +24,10 @@ const tests = {
 		rules: [{ op: "neq", property: "nested.val", value: "5" }],
 		result: true,
 	},
+	ne: {
+		rules: [{ op: "ne", property: "nested.val", value: "5" }],
+		result: true,
+	},
 	gt: {
 		rules: [{ op: "gt", property: "text", value: "Average" }],
 		result: true,

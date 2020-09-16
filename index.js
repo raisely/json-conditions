@@ -35,6 +35,7 @@ function checkConditions(settings, reference) {
 				result = value == rule.value;
 				if (altComparison !== null) result = result || (value == altComparison);
 				break;
+			case 'ne':
 			case 'neq':
 				result = value != rule.value;
 				if (altComparison !== null) result = result || (value != altComparison);
