@@ -83,16 +83,21 @@ Additionally, we assume that rule values may have come from a form, and so try t
 booleans. If the value of the property is a boolean, then the strings 'true' and 'false' (case insensitive) will
 be converted to booleans.
 
-| Operator  | Javascript operation |
-|---|---|
-| eq | == |
-| neq | != |
-| gt | > |
-| gte | >= |
-| lt | < |
-| lte | <= |
-| absent | ! |
-| present | !! |
+| Operator  | Javascript operation | Notes |
+|---|---|---|
+| eq | == | |
+| neq | != | |
+| ne | != | (Alias for neq) | 
+| gt | > | |
+| gte | >= | |
+| lt | < | |
+| lte | <= | |
+| absent | ! | |
+| empty | ! | (Alias for absent) |
+| present | !! | |
+| startsWith | _.toString(x).startsWith() |  |
+| endsWith | _.toString(x).endsWith() |  |
+| contains | _.toString(x).includes() |  |
 
 
 ## License
