@@ -1,6 +1,6 @@
 {
   "name": "json-conditions",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Simple conditional logic to evaluate against javascript objects",
   "main": "index.js",
   "scripts": {

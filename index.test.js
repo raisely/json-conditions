@@ -20,6 +20,18 @@ const tests = {
 		rules: [{ op: "eq", property: "nested.val", value: "6" }],
 		result: true,
 	},
+	startsWith: {
+		rules: [{ op: "startsWith", property: "text", value: "Mon" }],
+		result: true,
+	},
+	endsWith: {
+		rules: [{ op: "endsWith", property: "text", value: "day" }],
+		result: true,
+	},
+	contains: {
+		rules: [{ op: "contains", property: "text", value: "nd" }],
+		result: true,
+	},
 	neq: {
 		rules: [{ op: "neq", property: "nested.val", value: "5" }],
 		result: true,
@@ -57,6 +69,7 @@ const tests = {
 		result: false,
 	},
 	absent: { rules: [{ op: "absent", property: "missing" }], result: true },
+	empty: { rules: [{ op: "empty", property: "missing" }], result: true },
 	absent: { rules: [{ op: "absent", property: "blank" }], result: true },
 	"(not) absent": {
 		rules: [{ op: "absent", property: "text" }],

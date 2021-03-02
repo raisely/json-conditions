@@ -1,4 +1,5 @@
 const get = require('lodash/get');
+const toString = require('lodash/toString');
 
 /**
  * @param {object} settings
@@ -6,7 +7,7 @@ const get = require('lodash/get');
  * @param {string} settings.satisfy 'ALL' or 'ANY'
  * @param {function} settings.log Function to log the evaluation process for debugging
  * @param {object} testReference The object under test
- * @returns {boolean} Null if there are no rules, otherwise true/false depending on if testReference matches the rules
+ * @returns {boolean} Null if there are no rules,therwise true/alse depending on if testReference
  */
 function checkConditions(settings, reference) {
 	if (!(settings && Array.isArray(settings.rules))) return null;
@@ -52,9 +53,19 @@ function checkConditions(settings, reference) {
 			case 'lte':
 				result = value <= rule.value;
 				break;
+			case 'startsWith':
+				result = toString(value).startsWith(rule.value);
+				break;
+			case 'endsWith':
+				result = toString(value).endsWith(rule.value);
+				break;
+			case 'contains':
+				result = toString(value).includes(rule.value);
+				break;
 			case 'present':
 				result = !!value;
 				break;
+			case 'empty':
 			case 'absent':
 				result = !value;
 				break;
