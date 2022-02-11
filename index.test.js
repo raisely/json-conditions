@@ -1,15 +1,21 @@
-const assert = require('assert');
-const checkConditions = require('./index');
+const assert = require("assert");
+const checkConditions = require("./index");
 
 const assertEq = assert.equal;
 
 const reference = {
-	text: 'Monday',
+	text: "Monday",
 	nested: { val: 6 },
 	bool: true,
 	negative: false,
-	blank: '',
-}
+	blank: "",
+	months: ["January", "February"],
+	lunches: [
+		{ type: "veg", qty: 1, serve: "Monday" },
+		{ type: "any", qty: 2, serve: "Monday" },
+		{ type: "any", qty: 3, serve: "Monday" },
+	],
+};
 
 const tests = {
 	eq: {
@@ -152,13 +158,126 @@ const tests = {
 		satisfy: "ALL",
 		result: false,
 	},
+	"Array of strings, match some": {
+		rules: [
+			{
+				property: "months[]",
+				op: "some",
+				value: "January",
+			},
+		],
+		satisfy: "ANY",
+		result: true,
+	},
+	"Array of strings, match some (no match)": {
+		rules: [
+			{
+				property: "months[]",
+				op: "some",
+				value: "September",
+			},
+		],
+		satisfy: "ANY",
+		result: false,
+	},
+	"Array of strings, match none": {
+		rules: [
+			{
+				property: "months[]",
+				op: "none",
+				value: "December",
+			},
+		],
+		satisfy: "ANY",
+		result: true,
+	},
+	"Array of strings, match none (no match)": {
+		rules: [
+			{
+				property: "months[]",
+				op: "none",
+				value: "February",
+			},
+		],
+		satisfy: "ANY",
+		result: false,
+	},
+	"Array of objects, match all": {
+		rules: [
+			{
+				property: "lunches[].serve",
+				op: "all",
+				value: "Monday",
+			},
+		],
+		satisfy: "ANY",
+		result: true,
+	},
+	"Array of objects, match all (no match)": {
+		rules: [
+			{
+				property: "lunches[].type",
+				op: "all",
+				value: "veg",
+			},
+		],
+		satisfy: "ANY",
+		result: false,
+	},
+	"Array of objects, match some": {
+		rules: [
+			{
+				property: "lunches[].type",
+				op: "some",
+				value: "veg",
+			},
+		],
+		satisfy: "ANY",
+		result: true,
+	},
+	"Array of objects, match some (no match)": {
+		rules: [
+			{
+				property: "lunches[].type",
+				op: "some",
+				value: "pescatarian",
+			},
+		],
+		satisfy: "ANY",
+		result: false,
+	},
+	"Array of objects, match none": {
+		rules: [
+			{
+				property: "lunches[].type",
+				op: "none",
+				value: "pescatarian",
+			},
+		],
+		satisfy: "ANY",
+		result: true,
+	},
+	"Array of objects, match none (no match)": {
+		rules: [
+			{
+				property: "lunches[].type",
+				op: "none",
+				value: "veg",
+			},
+		],
+		satisfy: "ANY",
+		result: false,
+	},
 };
 
 function check({ rules, satisfy, result }) {
-	const res = checkConditions({ rules, satisfy, log: console.log }, reference);
+	const res = checkConditions(
+		{ rules, satisfy, log: console.log },
+		reference
+	);
 	assertEq(res, result);
 }
 
-describe('checkConditions', () => {
-	Object.keys(tests).forEach(name => it(name, () => check(tests[name])));
+describe("checkConditions", () => {
+	Object.keys(tests).forEach((name) => it(name, () => check(tests[name])));
 });

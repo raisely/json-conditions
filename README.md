@@ -21,6 +21,14 @@ const reference = {
 		tracks: 18,
 		engines: 1
 		battery: true,
+		previousOwners: ['Alice', 'Ahmed'],
+		batteryStatus: [{
+			type: 'AA',
+			charge: 'empty',
+		}, {
+			type: 'AA',
+			charge: 'full',
+		}]
 	}
 };
 
@@ -54,24 +62,54 @@ checkConditions({
 	satisfy: 'ANY',
 	log: console.log,
 }, reference);
+
+// Array rules - all return true
+checkConditions({
+	rules: [
+		// A required condition must always be satisfied regardless of the value
+		{ property: 'toy.previousOwners[]', op: 'some', value: 'Alice' },
+	],
+	satisfy: 'ANY',
+	log: console.log,
+}, reference);
+
+checkConditions({
+	rules: [
+		// A required condition must always be satisfied regardless of the value
+		{ property: 'toy.batteryStatus[].type', op: 'all', value: 'AA' },
+	],
+	satisfy: 'ANY',
+	log: console.log,
+}, reference);
+
+checkConditions({
+	rules: [
+		// A required condition must always be satisfied regardless of the value
+		{ property: 'toy.batteryStatus[].type', op: 'none', value: 'AAA' },
+	],
+	satisfy: 'ANY',
+	log: console.log,
+}, reference);
 ```
 
 ### Parameters
-| Param  | Type  | Default | Description |
-|---|---|---|---|
-| settings.log | function | | Optional function to log debug output from the evaluation |
-| settings.rules | object[] |   | Rules, see below |
-| settings.satisfy | string | ANY | How many rules must be satisfied to pass, 'ALL' or 'ANY' |
-| reference | object |   | The javascript object to evaluate the rules against |
+
+| Param            | Type     | Default | Description                                               |
+| ---------------- | -------- | ------- | --------------------------------------------------------- |
+| settings.log     | function |         | Optional function to log debug output from the evaluation |
+| settings.rules   | object[] |         | Rules, see below                                          |
+| settings.satisfy | string   | ANY     | How many rules must be satisfied to pass, 'ALL' or 'ANY'  |
+| reference        | object   |         | The javascript object to evaluate the rules against       |
 
 #### Rules
+
 Each rule is described by an object with the following properties
-| property  | Type  | Default | Description |
+| property | Type | Default | Description |
 |---|---|---|---|
-| op | string |   | The logical operator to use for comparison (see below) |
-| property | string |  | The property in the reference object to check, evaluated by |
-| required | boolean | false | If true, this rule must always evaluate to true for the object to pass the conditions | 
-| value | * |  | Value to compare the property to |
+| op | string | | The logical operator to use for comparison (see below) |
+| property | string | | The property in the reference object to check (evaluated by [lodash.get()](https://lodash.com/docs/4.17.15#get) |
+| required | boolean | false | If true, this rule must always evaluate to true for the object to pass the conditions |
+| value | \* | | Value to compare the property to |
 
 Property is passed to [lodash.get](https://lodash.com/docs/4.17.15#get) to lookup the value in the object.
 So effectively the rules are evaluated to `get(reference, rule.property) ${rule.op} ${rule.value}`
@@ -83,22 +121,34 @@ Additionally, we assume that rule values may have come from a form, and so try t
 booleans. If the value of the property is a boolean, then the strings 'true' and 'false' (case insensitive) will
 be converted to booleans.
 
-| Operator  | Javascript operation | Notes |
-|---|---|---|
-| eq | == | |
-| neq | != | |
-| ne | != | (Alias for neq) | 
-| gt | > | |
-| gte | >= | |
-| lt | < | |
-| lte | <= | |
-| absent | ! | |
-| empty | ! | (Alias for absent) |
-| present | !! | |
-| startsWith | _.toString(x).startsWith() |  |
-| endsWith | _.toString(x).endsWith() |  |
-| contains | _.toString(x).includes() |  |
+| Operator   | Javascript operation        | Notes              |
+| ---------- | --------------------------- | ------------------ |
+| eq         | ==                          |                    |
+| neq        | !=                          |                    |
+| ne         | !=                          | (Alias for neq)    |
+| gt         | >                           |                    |
+| gte        | >=                          |                    |
+| lt         | <                           |                    |
+| lte        | <=                          |                    |
+| absent     | !                           |                    |
+| empty      | !                           | (Alias for absent) |
+| present    | !!                          |                    |
+| startsWith | \_.toString(x).startsWith() |                    |
+| endsWith   | \_.toString(x).endsWith()   |                    |
+| contains   | \_.toString(x).includes()   |                    |
 
+# Array Syntax
+
+To check arrays for matches use `[]` in the property path to indicate that the preceeding path is an array.
+You can specify further paths to reference into if the array contains an object
+eg `toy.batteryStatus[].type` in the example at the top
+
+| Operator | Javascript operation      | Notes                                       |
+| -------- | ------------------------- | ------------------------------------------- |
+| none     | !x.includes(value)        | Value is not in the array                   |
+| some     | x.includes(value)         | Value is present at least once in the array |
+| all      | !x.find(i => i !== value) | Every entry in the array matches value      |
 
 ## License
+
 Licensed under the [NoHarm license](https://github.com/raisely/noharm)
