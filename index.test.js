@@ -296,11 +296,23 @@ const tests = {
 			ref[`prevN${property.substring(1)}`],
 		result: false,
 	},
+	"Transform value": {
+		rules: [
+			{
+				property: "nested.val",
+				op: "gt",
+				value: "numeric",
+			},
+		],
+		satisfy: "ANY",
+		transformValueFn: (value, ref, property) => ref[value],
+		result: true,
+	},
 };
 
-function check({ rules, satisfy, previousValueFn, result }) {
+function check({ rules, satisfy, previousValueFn, transformValueFn, result }) {
 	const res = checkConditions(
-		{ rules, satisfy, log: console.log, previousValueFn },
+		{ rules, satisfy, log: console.log, previousValueFn, transformValueFn },
 		reference
 	);
 	assertEq(res, result);

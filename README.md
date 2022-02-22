@@ -12,6 +12,7 @@ npm install json-conditions
 const checkConditions = require('json-conditions');
 
 const reference = {
+	topLevelNumber: 3,
 	user: {
 		preferredName: 'Alex',
 		age: 4,
@@ -64,6 +65,17 @@ checkConditions({
 	log: console.log,
 }, reference);
 
+// Returns true
+checkConditions({
+	rules: [
+		// transformValueFn causes value to be substituted with ref[value], which is reference.topLevelNumber, which is 3
+		{ property: 'toy.tracks', op: 'gt', value: 'topLevelNumber' },
+	],
+	satisfy: 'ANY',
+	log: console.log,
+	transformValueFn: (val) => ref[val],
+}, reference);
+
 // Array rules - all return true
 checkConditions({
 	rules: [
@@ -104,13 +116,14 @@ checkConditions({
 
 ### Parameters
 
-| Param                    | Type     | Default | Description                                                                        |
-| ------------------------ | -------- | ------- | ---------------------------------------------------------------------------------- |
-| settings.log             | function |         | Optional function to log debug output from the evaluation                          |
-| settings.rules           | object[] |         | Rules, see below                                                                   |
-| settings.satisfy         | string   | ANY     | How many rules must be satisfied to pass, 'ALL' or 'ANY'                           |
-| settings.previousValueFn | function |         | Function that returns a previous value, takes arguments (reference, rule.property) |
-| reference                | object   |         | The javascript object to evaluate the rules against                                |
+| Param                     | Type     | Default | Description                                                                                                                                                        |
+| ------------------------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| settings.log              | function |         | Optional function to log debug output from the evaluation                                                                                                          |
+| settings.rules            | object[] |         | Rules, see below                                                                                                                                                   |
+| settings.satisfy          | string   | ANY     | How many rules must be satisfied to pass, 'ALL' or 'ANY'                                                                                                           |
+| settings.previousValueFn  | function |         | Function that returns a previous value, takes arguments (reference, rule.property)                                                                                 |
+| settings.transformValueFn | function |         | If defined, the return value from settings.transformValueFn(rule.value, reference, rule.property) will be subsituted for rule.value when performing the comparison |
+| reference                 | object   |         | The javascript object to evaluate the rules against                                                                                                                |
 
 #### Rules
 

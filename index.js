@@ -32,47 +32,56 @@ function checkConditions(settings, reference) {
 				nestedPath ? get(item, nestedPath) : item
 			);
 		}
+
+		let targetValue = rule.value;
+		if (typeof settings.transformValueFn === "function") {
+			targetValue = settings.transformValueFn(
+				targetValue,
+				reference,
+				rule.property
+			);
+		}
 		let altComparison = null;
 		if (
 			typeof value === "boolean" &&
-			(typeof rule.value === "string" || rule.value instanceof String)
+			(typeof targetValue === "string" || targetValue instanceof String)
 		) {
-			if (rule.value.toLowerCase() === "false") altComparison = false;
-			if (rule.value.toLowerCase() === "true") altComparison = true;
+			if (targetValue.toLowerCase() === "false") altComparison = false;
+			if (targetValue.toLowerCase() === "true") altComparison = true;
 		}
 		let result;
 		switch (rule.op) {
 			case "eq":
-				result = value == rule.value;
+				result = value == targetValue;
 				if (altComparison !== null)
 					result = result || value == altComparison;
 				break;
 			case "ne":
 			case "neq":
-				result = value != rule.value;
+				result = value != targetValue;
 				if (altComparison !== null)
 					result = result || value != altComparison;
 				break;
 			case "gt":
-				result = value > rule.value;
+				result = value > targetValue;
 				break;
 			case "gte":
-				result = value >= rule.value;
+				result = value >= targetValue;
 				break;
 			case "lt":
-				result = value < rule.value;
+				result = value < targetValue;
 				break;
 			case "lte":
-				result = value <= rule.value;
+				result = value <= targetValue;
 				break;
 			case "startsWith":
-				result = toString(value).startsWith(rule.value);
+				result = toString(value).startsWith(targetValue);
 				break;
 			case "endsWith":
-				result = toString(value).endsWith(rule.value);
+				result = toString(value).endsWith(targetValue);
 				break;
 			case "contains":
-				result = toString(value).includes(rule.value);
+				result = toString(value).includes(targetValue);
 				break;
 			case "present":
 				result = !!value;
@@ -86,13 +95,13 @@ function checkConditions(settings, reference) {
 				// value that doesn't match the expected value
 				result =
 					Array.isArray(value) &&
-					!value.find((v) => v !== rule.value);
+					!value.find((v) => v !== targetValue);
 				break;
 			case "some":
-				result = Array.isArray(value) && value.includes(rule.value);
+				result = Array.isArray(value) && value.includes(targetValue);
 				break;
 			case "none":
-				result = Array.isArray(value) && !value.includes(rule.value);
+				result = Array.isArray(value) && !value.includes(targetValue);
 				break;
 			case "crosses":
 				console.log(typeof settings.previousValueFn);
@@ -105,8 +114,8 @@ function checkConditions(settings, reference) {
 					reference,
 					rule.property
 				);
-				result = rule.value > lastValue && rule.value <= value;
-				debugStr = `(${index}) ${rule.property} was ${lastValue} and became ${value}. crossed ${rule.value}? ${result}\n`;
+				result = targetValue > lastValue && targetValue <= value;
+				debugStr = `(${index}) ${rule.property} was ${lastValue} and became ${value}. crossed ${targetValue}? ${result}\n`;
 				break;
 			default:
 				error = new Error(`Unknown comparison for rule (${rule.op})`);
@@ -121,7 +130,7 @@ function checkConditions(settings, reference) {
 			const unary = ["absent", "present"].includes(rule.op);
 			debugStr += `(${index}) ${rule.property} (${value}) ${
 				unary ? "is" : ""
-			} ${rule.op} ${unary ? "" : rule.value}? ${result}\n`;
+			} ${rule.op} ${unary ? "" : targetValue}? ${result}\n`;
 		}
 		return result;
 	});
