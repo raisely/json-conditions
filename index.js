@@ -94,6 +94,20 @@ function checkConditions(settings, reference) {
 			case "none":
 				result = Array.isArray(value) && !value.includes(rule.value);
 				break;
+			case "crosses":
+				console.log(typeof settings.previousValueFn);
+				if (typeof settings.previousValueFn !== "function") {
+					throw new Error(
+						'Comparison "crosses" selected, but no function supplied to return previous value'
+					);
+				}
+				const lastValue = settings.previousValueFn(
+					reference,
+					rule.property
+				);
+				result = rule.value > lastValue && rule.value <= value;
+				debugStr = `(${index}) ${rule.property} was ${lastValue} and became ${value}. crossed ${rule.value}? ${result}\n`;
+				break;
 			default:
 				error = new Error(`Unknown comparison for rule (${rule.op})`);
 				error.rule = rule;
@@ -103,10 +117,12 @@ function checkConditions(settings, reference) {
 			if (rule.required) requiredPassed += 1;
 			else normalPassed += 1;
 		}
-		const unary = ["absent", "present"].includes(rule.op);
-		debugStr += `(${index}) ${rule.property} (${value}) ${
-			unary ? "is" : ""
-		} ${rule.op} ${unary ? "" : rule.value}? ${result}\n`;
+		if (!debugStr) {
+			const unary = ["absent", "present"].includes(rule.op);
+			debugStr += `(${index}) ${rule.property} (${value}) ${
+				unary ? "is" : ""
+			} ${rule.op} ${unary ? "" : rule.value}? ${result}\n`;
+		}
 		return result;
 	});
 

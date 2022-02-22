@@ -18,6 +18,7 @@ const reference = {
 	},
 	toy: {
 		name: 'Model Train',
+		prevTracks: 5,
 		tracks: 18,
 		engines: 1
 		battery: true,
@@ -84,6 +85,15 @@ checkConditions({
 
 checkConditions({
 	rules: [
+		{ property: 'toy.tracks', op: 'crosses', value: 10 },
+	],
+	satisfy: 'ANY',
+	log: console.log,
+	previousValueFn: (ref) => ref.toy.prevTracks,
+}, reference);
+
+checkConditions({
+	rules: [
 		// A required condition must always be satisfied regardless of the value
 		{ property: 'toy.batteryStatus[].type', op: 'none', value: 'AAA' },
 	],
@@ -94,12 +104,13 @@ checkConditions({
 
 ### Parameters
 
-| Param            | Type     | Default | Description                                               |
-| ---------------- | -------- | ------- | --------------------------------------------------------- |
-| settings.log     | function |         | Optional function to log debug output from the evaluation |
-| settings.rules   | object[] |         | Rules, see below                                          |
-| settings.satisfy | string   | ANY     | How many rules must be satisfied to pass, 'ALL' or 'ANY'  |
-| reference        | object   |         | The javascript object to evaluate the rules against       |
+| Param                    | Type     | Default | Description                                                                        |
+| ------------------------ | -------- | ------- | ---------------------------------------------------------------------------------- |
+| settings.log             | function |         | Optional function to log debug output from the evaluation                          |
+| settings.rules           | object[] |         | Rules, see below                                                                   |
+| settings.satisfy         | string   | ANY     | How many rules must be satisfied to pass, 'ALL' or 'ANY'                           |
+| settings.previousValueFn | function |         | Function that returns a previous value, takes arguments (reference, rule.property) |
+| reference                | object   |         | The javascript object to evaluate the rules against                                |
 
 #### Rules
 
@@ -121,21 +132,22 @@ Additionally, we assume that rule values may have come from a form, and so try t
 booleans. If the value of the property is a boolean, then the strings 'true' and 'false' (case insensitive) will
 be converted to booleans.
 
-| Operator   | Javascript operation        | Notes              |
-| ---------- | --------------------------- | ------------------ |
-| eq         | ==                          |                    |
-| neq        | !=                          |                    |
-| ne         | !=                          | (Alias for neq)    |
-| gt         | >                           |                    |
-| gte        | >=                          |                    |
-| lt         | <                           |                    |
-| lte        | <=                          |                    |
-| absent     | !                           |                    |
-| empty      | !                           | (Alias for absent) |
-| present    | !!                          |                    |
-| startsWith | \_.toString(x).startsWith() |                    |
-| endsWith   | \_.toString(x).endsWith()   |                    |
-| contains   | \_.toString(x).includes()   |                    |
+| Operator   | Javascript operation                           | Notes              |
+| ---------- | ---------------------------------------------- | ------------------ |
+| eq         | ==                                             |                    |
+| neq        | !=                                             |                    |
+| ne         | !=                                             | (Alias for neq)    |
+| gt         | >                                              |                    |
+| gte        | >=                                             |                    |
+| lt         | <                                              |                    |
+| lte        | <=                                             |                    |
+| crosses    | Greater than, but previous value was less than | (See below)        |
+| absent     | !                                              |                    |
+| empty      | !                                              | (Alias for absent) |
+| present    | !!                                             |                    |
+| startsWith | \_.toString(x).startsWith()                    |                    |
+| endsWith   | \_.toString(x).endsWith()                      |                    |
+| contains   | \_.toString(x).includes()                      |                    |
 
 # Array Syntax
 
@@ -148,6 +160,17 @@ eg `toy.batteryStatus[].type` in the example at the top
 | none     | !x.includes(value)        | Value is not in the array                   |
 | some     | x.includes(value)         | Value is present at least once in the array |
 | all      | !x.find(i => i !== value) | Every entry in the array matches value      |
+
+# Crosses
+
+Sometimes it's not enough to know if a property is greater than a given value, but you want to know if this is
+the first time it has risen above that value.
+For example, if you were running conditions against updates to some data and you want the condition to pass
+the first time a counter passes 10, but not after that. You could pass in an object like `{ oldCount, newCount }`
+and use the crosses operator.
+
+When using the crosses operator, you must pass in a `previousValueFn` that will return a previous value that can
+be used to check if the value has crossed the intended value
 
 ## License
 

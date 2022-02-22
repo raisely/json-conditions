@@ -15,6 +15,9 @@ const reference = {
 		{ type: "any", qty: 2, serve: "Monday" },
 		{ type: "any", qty: 3, serve: "Monday" },
 	],
+	oldNumeric: 4,
+	prevNumeric: 5,
+	numeric: 5,
 };
 
 const tests = {
@@ -268,11 +271,36 @@ const tests = {
 		satisfy: "ANY",
 		result: false,
 	},
+	"Crosses (current value is equal, prev value was less)": {
+		rules: [
+			{
+				property: "numeric",
+				op: "crosses",
+				value: 5,
+			},
+		],
+		satisfy: "ANY",
+		previousValueFn: (ref) => ref.oldNumeric,
+		result: true,
+	},
+	"Crosses (prev value was equal)": {
+		rules: [
+			{
+				property: "numeric",
+				op: "crosses",
+				value: 5,
+			},
+		],
+		satisfy: "ANY",
+		previousValueFn: (ref, property) =>
+			ref[`prevN${property.substring(1)}`],
+		result: false,
+	},
 };
 
-function check({ rules, satisfy, result }) {
+function check({ rules, satisfy, previousValueFn, result }) {
 	const res = checkConditions(
-		{ rules, satisfy, log: console.log },
+		{ rules, satisfy, log: console.log, previousValueFn },
 		reference
 	);
 	assertEq(res, result);
