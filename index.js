@@ -146,18 +146,21 @@ function checkConditions(settings, reference) {
 
 	const requiredSatisfied =
 		!requiredTotal || requiredTotal === requiredPassed;
-	const normalSatisfied =
-		satisfy === "ALL" ? normalPassed === normalTotal : normalPassed > 0;
+    const normalSatisfied =
+		!normalTotal ||
+		(satisfy === "ALL" ? normalPassed === normalTotal : normalPassed > 0);
 	const outcome = normalSatisfied && requiredSatisfied;
 
-	debugStr += `Passed ${normalPassed} / ${normalTotal} (need ${satisfy}, ${
-		normalSatisfied ? "pass" : "fail"
-	})`;
+	if (normalTotal > 0) {
+		debugStr += `Passed ${normalPassed} / ${normalTotal} (need ${satisfy}, ${
+			normalSatisfied ? "pass" : "fail"
+		})\n`;
+	}
 	if (requiredTotal > 0)
-		debugStr += `, and ${requiredPassed} / ${requiredTotal} required conditions (${
+		debugStr += `Passed ${requiredPassed} / ${requiredTotal} required conditions (${
 			requiredSatisfied ? "pass" : "fail"
-		})`;
-	debugStr += ` (${outcome ? "PASS" : "FAIL"})`;
+		})\n`;
+	debugStr += `Result: ${outcome ? "PASS" : "FAIL"}`;
 	if (settings.log) settings.log(debugStr);
 
 	// test the result
