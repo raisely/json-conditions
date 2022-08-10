@@ -101,7 +101,11 @@ function checkConditions(settings, reference) {
 				result = Array.isArray(value) && value.includes(targetValue);
 				break;
 			case "none":
-				result = Array.isArray(value) && !value.includes(targetValue);
+				result =
+					(Array.isArray(value) ||
+						value === null ||
+						typeof value === "undefined") &&
+					!(value || []).includes(targetValue);
 				break;
 			case "crosses":
 				console.log(typeof settings.previousValueFn);
@@ -146,7 +150,7 @@ function checkConditions(settings, reference) {
 
 	const requiredSatisfied =
 		!requiredTotal || requiredTotal === requiredPassed;
-    const normalSatisfied =
+	const normalSatisfied =
 		!normalTotal ||
 		(satisfy === "ALL" ? normalPassed === normalTotal : normalPassed > 0);
 	const outcome = normalSatisfied && requiredSatisfied;

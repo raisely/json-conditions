@@ -161,7 +161,7 @@ const tests = {
 		satisfy: "ALL",
 		result: false,
 	},
-  "All Required - Passed, Satisfy ALL": {
+	"All Required - Passed, Satisfy ALL": {
 		rules: [
 			{ op: "eq", property: "text", value: "Monday", required: true },
 			{ op: "eq", property: "negative", value: "false", required: true },
@@ -170,7 +170,7 @@ const tests = {
 		satisfy: "ALL",
 		result: true,
 	},
-  "All Required - Passed, Satisfy ANY": {
+	"All Required - Passed, Satisfy ANY": {
 		rules: [
 			{ op: "eq", property: "text", value: "Monday", required: true },
 			{ op: "eq", property: "negative", value: "false", required: true },
@@ -179,7 +179,7 @@ const tests = {
 		satisfy: "ANY",
 		result: true,
 	},
-  "All Required - Failed, Satisfy ALL": {
+	"All Required - Failed, Satisfy ALL": {
 		rules: [
 			{ op: "eq", property: "text", value: "Tuesday", required: true },
 			{ op: "eq", property: "negative", value: "true", required: true },
@@ -188,7 +188,7 @@ const tests = {
 		satisfy: "ALL",
 		result: false,
 	},
-  "All Required - Failed, Satisfy ANY": {
+	"All Required - Failed, Satisfy ANY": {
 		rules: [
 			{ op: "eq", property: "text", value: "Tuesday", required: true },
 			{ op: "eq", property: "negative", value: "true", required: true },
@@ -289,6 +289,17 @@ const tests = {
 		rules: [
 			{
 				property: "lunches[].type",
+				op: "none",
+				value: "pescatarian",
+			},
+		],
+		satisfy: "ANY",
+		result: true,
+	},
+	"Non-Array of objects, match none": {
+		rules: [
+			{
+				property: "lunches[].nothing",
 				op: "none",
 				value: "pescatarian",
 			},
