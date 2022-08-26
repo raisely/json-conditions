@@ -60,7 +60,7 @@ function checkConditions(settings, reference) {
 			case "neq":
 				result = value != targetValue;
 				if (altComparison !== null)
-					result = result || value != altComparison;
+					result = result && value != altComparison;
 				break;
 			case "gt":
 				result = value > targetValue;
@@ -130,12 +130,12 @@ function checkConditions(settings, reference) {
 			if (rule.required) requiredPassed += 1;
 			else normalPassed += 1;
 		}
-		if (!debugStr) {
-			const unary = ["absent", "present"].includes(rule.op);
-			debugStr += `(${index}) ${rule.property} (${value}) ${
-				unary ? "is" : ""
-			} ${rule.op} ${unary ? "" : targetValue}? ${result}\n`;
-		}
+		
+		const unary = ["absent", "present"].includes(rule.op);
+		debugStr += `(${index}) ${rule.property} (${value}) ${
+			unary ? "is" : ""
+		} ${rule.op} ${unary ? "" : targetValue}? ${result}\n`;
+		
 		return result;
 	});
 
