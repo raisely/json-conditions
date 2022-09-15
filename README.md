@@ -161,6 +161,7 @@ be converted to booleans.
 | startsWith | \_.toString(x).startsWith()                    |                    |
 | endsWith   | \_.toString(x).endsWith()                      |                    |
 | contains   | \_.toString(x).includes()                      |                    |
+| not_contains | !\_.toString(x).includes()                   |                    |
 
 # Array Syntax
 
