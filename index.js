@@ -83,6 +83,9 @@ function checkConditions(settings, reference) {
 			case "contains":
 				result = toString(value).includes(targetValue);
 				break;
+			case "not_contains":
+				result = !toString(value).includes(targetValue);
+				break;
 			case "present":
 				result = !!value;
 				break;
